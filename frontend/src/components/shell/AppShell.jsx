@@ -208,15 +208,18 @@ export function AppShell({
                   style={{
                     backgroundColor:
                       connectionStatus === 'LIVE' ? 'rgba(91, 214, 127, 0.15)' :
+                      (connectionStatus === 'STALE' && secondsSinceUpdate >= 6) ? 'rgba(255, 184, 77, 0.15)' :
                       connectionStatus === 'RECONNECTING' ? 'rgba(255, 184, 77, 0.15)' :
-                      connectionStatus === 'STALE' ? 'rgba(255, 184, 77, 0.15)' :
+                      (connectionStatus === 'STALE') ? 'var(--bg-well)' :
                       'rgba(255, 122, 112, 0.15)',
                     color:
                       connectionStatus === 'LIVE' ? 'var(--status-healthy)' :
+                      (connectionStatus === 'STALE' && secondsSinceUpdate >= 6) ? 'var(--status-review)' :
                       connectionStatus === 'RECONNECTING' ? 'var(--status-review)' :
-                      connectionStatus === 'STALE' ? 'var(--status-review)' :
+                      (connectionStatus === 'STALE') ? 'var(--text-secondary)' :
                       'var(--status-failed)'
                   }}
+                  title={connectionStatus === 'STALE' ? `No telemetry for ${secondsSinceUpdate} s` : `Connection: ${connectionStatus}`}
                 >
                   {connectionStatus === 'STALE' ? `Stale (${secondsSinceUpdate}s)` :
                    connectionStatus === 'RECONNECTING' ? 'Reconnecting' :

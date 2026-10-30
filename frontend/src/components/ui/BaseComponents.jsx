@@ -24,9 +24,10 @@ export function HonestyBadges() {
           color: 'var(--text-primary)',
           border: '1px dashed var(--border-separator)'
         }}
+        title="Model: LightGBM Regressor + Split-Conformal Band (v1)"
       >
         <FlaskConical size={14} style={{ color: 'var(--text-secondary)' }} />
-        <span>Placeholder model</span>
+        <span>LightGBM Conformal v1</span>
       </span>
     </div>
   );
