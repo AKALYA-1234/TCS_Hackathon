@@ -929,7 +929,7 @@ async def get_unit_history(
         ORDER BY bucket;
     """)
 
-    res_rows = await db.execute(telemetry_query, {"uid": lookup_id, "start_iso": start_iso, "end_iso": end_iso})
+    res_rows = await db.execute(telemetry_query, {"uid": lookup_id, "start_iso": sql_start, "end_iso": sql_end})
     rows = res_rows.all()
 
     # Columnar series arrays
@@ -1049,9 +1049,11 @@ async def get_unit_history(
                       ("Thermostat deadband reached / Compressor idle" if curr_state == "ON_IDLE" else
                        "Scheduled shutdown / Night period")))
                 )
+                seg_st = max(start_iso, t_series[start_idx])
+                seg_en = min(end_iso, t_series[i])
                 states.append({
-                    "start": t_series[start_idx],
-                    "end": t_series[i],
+                    "start": seg_st,
+                    "end": seg_en,
                     "state": curr_state,
                     "reason": reason,
                     "duration_min": round(dur_min, 1),
@@ -1073,9 +1075,11 @@ async def get_unit_history(
               ("Thermostat deadband reached / Compressor idle" if curr_state == "ON_IDLE" else
                "Scheduled shutdown / Night period")))
         )
+        seg_st = max(start_iso, t_series[start_idx])
+        seg_en = min(end_iso, t_series[-1])
         states.append({
-            "start": t_series[start_idx],
-            "end": t_series[-1],
+            "start": seg_st,
+            "end": seg_en,
             "state": curr_state,
             "reason": reason,
             "duration_min": round(dur_min, 1),
@@ -1128,7 +1132,7 @@ async def get_unit_history(
           AND timestamp <= :end_iso
         GROUP BY dow, hour;
     """)
-    heat_res = await db.execute(heat_q, {"uid": lookup_id, "start_iso": start_iso, "end_iso": end_iso})
+    heat_res = await db.execute(heat_q, {"uid": lookup_id, "start_iso": sql_start, "end_iso": sql_end})
     heatmap_matrix = []
     for hr in heat_res.all():
         heatmap_matrix.append({
