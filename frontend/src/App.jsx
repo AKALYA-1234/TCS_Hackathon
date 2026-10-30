@@ -588,6 +588,7 @@ export default function App() {
             allRooms={allRooms}
             onApplyProposal={({ room, setpoint }) => {
               notify(`Proposal created for ${room} with setpoint ${setpoint} °C`);
+              fetchProposals();
               updateURL('inbox');
             }}
           />
