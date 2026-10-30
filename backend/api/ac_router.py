@@ -894,8 +894,10 @@ async def get_unit_history(
     elif eff_res == "1d":
         group_seconds = 86400
 
-    start_iso = start_dt.strftime("%Y-%m-%d %H:%M:%S")
-    end_iso = end_dt.strftime("%Y-%m-%d %H:%M:%S")
+    sql_start = start_dt.strftime("%Y-%m-%d %H:%M:%S")
+    sql_end = end_dt.strftime("%Y-%m-%d %H:%M:%S")
+    start_iso = start_dt.strftime("%Y-%m-%d %H:%M:%SZ")
+    end_iso = end_dt.strftime("%Y-%m-%d %H:%M:%SZ")
 
     # Single-source tariff from settings (default 9.20 INR/kWh)
     tar_res = await db.execute(select(TariffModel).limit(1))

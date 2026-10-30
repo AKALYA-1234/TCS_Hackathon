@@ -573,7 +573,7 @@ export function OptimizerScreen({ allRooms = [], onApplyProposal }) {
                       ))}
 
                       {/* Hatched Current Timer Strip on the Left Edge */}
-                      {timerHeightPx > 0 && (
+                      {timer && timerHeightPx > 0 && (
                         <div
                           className="absolute left-0 z-10 w-2.5 rounded-l-md pointer-events-none"
                           title={`Current timer: ${timer.start_time}–${timer.end_time}`}
