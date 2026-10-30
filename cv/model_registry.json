@@ -1,0 +1,44 @@
+{
+  "model_name": "YOLOv8n-Classroom-ONNX",
+  "model_version": "v2.1.0-classroom-head",
+  "architecture": "YOLOv8n (Ultralytics)",
+  "source": "Pretrained on SCUT-HEAD and CrowdHuman head detection datasets",
+  "training_data": "SCUT-HEAD Part A (Classroom Surveillance) + CrowdHuman (Heads)",
+  "datasets": [
+    {
+      "name": "SCUT-HEAD Part A",
+      "images_total": 1500,
+      "split_train": 1010,
+      "split_val": 250,
+      "split_test": 240,
+      "license": "Non-Commercial Educational / Research"
+    }
+  ],
+  "classes": [
+    "head"
+  ],
+  "class_id_map": {
+    "0": "head"
+  },
+  "input_resolution": "512x512",
+  "runtime_backend": "ONNXRuntime CPU (2 threads)",
+  "inference_parameters": {
+    "conf_threshold": 0.15,
+    "nms_iou_threshold": 0.5,
+    "smoothing_rule": "5-frame moving median with 5-min zero occupancy cooldown"
+  },
+  "license": "AGPL-3.0",
+  "file_hash_sha256": "5d8f1a1d0d052dae20481a56cb090f08ac0e5a78ffcc90b60223256deb8d1c44",
+  "onnx_model_file": "cv/v8n-head.onnx",
+  "parity_verified": true,
+  "benchmarks": {
+    "held_out_test_images": 240,
+    "test_mae": 22.35,
+    "test_rmse": 28.82,
+    "test_bias": -22.15,
+    "share_within_10pct": 6.7,
+    "median_latency_ms": 64.51848200231325,
+    "max_fps": 15.5
+  },
+  "created_at": "2026-10-30T03:18:53Z"
+}

@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+dist/
+
+# Environments & Virtual Environments
+.env
+.env.local
+.venv/
+venv/
+**/.venv/
+
+# Python caches, testing, and linting
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+**/.pytest_cache/
+.ruff_cache/
+**/.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+runs/
+*.log
+*vitest_output.txt
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+app.db
+pgdata/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Claude / Agent directories & artifacts
+.claude/
+**/.claude/
+
+# Datasets and processed data
+dataset/
+dataset_processed/
+synthetic_data/output/
+
+# Computer Vision images and raw datasets
+cv/data/
+cv/eval_data/
+cv/images/
+cv/**/images/
+
+# Auto-downloaded pretrained weights
+yolov8n.pt

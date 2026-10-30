@@ -1,0 +1,509 @@
+# Campus Hierarchy & Room Configurations (3 Buildings, 18 Rooms, 28 AC Units)
+# Heights: 3.0m default ceiling height.
+# AC Units: control_type is 'inverter' or 'fixed_speed'
+
+buildings:
+  - id: "bldg-eng"
+    name: "Engineering Hall"
+    archetype_building_id: 173  # Academic / Lecture Hall archetype
+    rooms:
+      - id: "eng-101"
+        name: "Lecture Hall 101"
+        room_type: "lecture_hall"
+        area_sqm: 150.0
+        height_m: 3.2
+        capacity: 100
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 1.25
+        units:
+          - id: "ac-eng-101-1"
+            name: "Cassette North"
+            rated_kw: 10.5
+            control_type: "inverter"
+          - id: "ac-eng-101-2"
+            name: "Cassette South"
+            rated_kw: 10.5
+            control_type: "inverter"
+
+      - id: "eng-102"
+        name: "Robotics & Embedded Lab"
+        room_type: "lab"
+        area_sqm: 110.0
+        height_m: 3.0
+        capacity: 40
+        target_temp_c: 23.0
+        min_temp_c: 22.0
+        max_temp_c: 24.5
+        is_critical: true
+        thermal_multiplier: 1.40
+        units:
+          - id: "ac-eng-102-1"
+            name: "Precision Split 1"
+            rated_kw: 5.25
+            control_type: "fixed_speed"
+          - id: "ac-eng-102-2"
+            name: "Precision Split 2"
+            rated_kw: 10.5
+            control_type: "fixed_speed"
+
+      - id: "eng-103"
+        name: "Software & AI Computer Lab"
+        room_type: "computer_lab"
+        area_sqm: 125.0
+        height_m: 3.0
+        capacity: 50
+        target_temp_c: 23.5
+        min_temp_c: 22.5
+        max_temp_c: 25.0
+        is_critical: false
+        thermal_multiplier: 1.50
+        units:
+          - id: "ac-eng-103-1"
+            name: "Inverter Multi-1"
+            rated_kw: 7.0
+            control_type: "inverter"
+          - id: "ac-eng-103-2"
+            name: "Inverter Multi-2"
+            rated_kw: 7.0
+            control_type: "inverter"
+          - id: "ac-eng-103-3"
+            name: "Inverter Multi-3"
+            rated_kw: 7.0
+            control_type: "inverter"
+
+      - id: "eng-201"
+        name: "Seminar Room 201"
+        room_type: "seminar"
+        area_sqm: 65.0
+        height_m: 3.0
+        capacity: 35
+        target_temp_c: 24.5
+        min_temp_c: 23.5
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.95
+        # Deliberately undersized room (1.0 TR vs 4.7 kW design load, -44.3% margin) to exercise cannot_reach
+        units:
+          - id: "ac-eng-201-1"
+            name: "Wall Split A"
+            rated_kw: 3.5
+            control_type: "inverter"
+
+      - id: "eng-301"
+        name: "Faculty & Department Office"
+        room_type: "office"
+        area_sqm: 50.0
+        height_m: 2.8
+        capacity: 12
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.85
+        units:
+          - id: "ac-eng-301-1"
+            name: "Office Split"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+      - id: "eng-server"
+        name: "Campus Core Server Room"
+        room_type: "server_room"
+        area_sqm: 40.0
+        height_m: 3.0
+        capacity: 2
+        target_temp_c: 20.0
+        min_temp_c: 18.0
+        max_temp_c: 22.0
+        is_critical: true
+        thermal_multiplier: 2.20
+        units:
+          - id: "ac-eng-srv-1"
+            name: "CRAC Primary"
+            rated_kw: 10.5
+            control_type: "inverter"
+          - id: "ac-eng-srv-2"
+            name: "CRAC Secondary"
+            rated_kw: 10.5
+            control_type: "inverter"
+
+  - id: "bldg-sci"
+    name: "Science Complex"
+    archetype_building_id: 253  # Laboratory & Classroom archetype
+    rooms:
+      - id: "sci-101"
+        name: "Main Science Auditorium"
+        room_type: "lecture_hall"
+        area_sqm: 180.0
+        height_m: 3.5
+        capacity: 140
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 1.30
+        units:
+          - id: "ac-sci-101-1"
+            name: "Auditorium Package 1"
+            rated_kw: 14.0
+            control_type: "inverter"
+          - id: "ac-sci-101-2"
+            name: "Auditorium Package 2"
+            rated_kw: 14.0
+            control_type: "inverter"
+
+      - id: "sci-201"
+        name: "Organic Chemistry Wet Lab"
+        room_type: "lab"
+        area_sqm: 120.0
+        height_m: 3.0
+        capacity: 40
+        target_temp_c: 22.5
+        min_temp_c: 21.5
+        max_temp_c: 24.0
+        is_critical: true
+        thermal_multiplier: 1.45
+        units:
+          - id: "ac-sci-201-1"
+            name: "Fume-Hood Split 1"
+            rated_kw: 7.0
+            control_type: "fixed_speed"
+          - id: "ac-sci-201-2"
+            name: "Fume-Hood Split 2"
+            rated_kw: 10.5
+            control_type: "fixed_speed"
+
+      - id: "sci-202"
+        name: "Bio-Informatics Computer Lab"
+        room_type: "computer_lab"
+        area_sqm: 95.0
+        height_m: 3.0
+        capacity: 45
+        target_temp_c: 23.0
+        min_temp_c: 22.0
+        max_temp_c: 25.0
+        is_critical: false
+        thermal_multiplier: 1.45
+        units:
+          - id: "ac-sci-202-1"
+            name: "Ceiling Cassette 1"
+            rated_kw: 7.0
+            control_type: "inverter"
+          - id: "ac-sci-202-2"
+            name: "Ceiling Cassette 2"
+            rated_kw: 10.5
+            control_type: "inverter"
+
+      - id: "sci-301"
+        name: "Science Seminar Hall"
+        room_type: "seminar"
+        area_sqm: 70.0
+        height_m: 3.0
+        capacity: 35
+        target_temp_c: 24.5
+        min_temp_c: 23.5
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.95
+        # Deliberately marginal room 1 (2.0 TR = 7.0 kW vs 4.89 kW design load, +7.3% margin)
+        units:
+          - id: "ac-sci-301-1"
+            name: "Wall Split A"
+            rated_kw: 7.0
+            control_type: "inverter"
+
+      - id: "sci-302"
+        name: "Faculty Research Office"
+        room_type: "office"
+        area_sqm: 55.0
+        height_m: 2.8
+        capacity: 10
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.85
+        units:
+          - id: "ac-sci-302-1"
+            name: "Office Split"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+      - id: "sci-303"
+        name: "Dean Administration Suite"
+        room_type: "office"
+        area_sqm: 60.0
+        height_m: 2.8
+        capacity: 15
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.85
+        # Deliberately marginal room 2 (1.5 TR = 5.25 kW vs 3.59 kW design load, +9.6% margin)
+        units:
+          - id: "ac-sci-303-1"
+            name: "Suite Split"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+  - id: "bldg-mgmt"
+    name: "Management Block"
+    archetype_building_id: 229  # Large Academic Complex archetype
+    rooms:
+      - id: "mgmt-101"
+        name: "Executive Lecture Theatre"
+        room_type: "lecture_hall"
+        area_sqm: 160.0
+        height_m: 3.2
+        capacity: 120
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 1.25
+        units:
+          - id: "ac-mgmt-101-1"
+            name: "Theatre VRF 1"
+            rated_kw: 10.5
+            control_type: "inverter"
+          - id: "ac-mgmt-101-2"
+            name: "Theatre VRF 2"
+            rated_kw: 14.0
+            control_type: "inverter"
+
+      - id: "mgmt-102"
+        name: "Data Analytics Computer Lab"
+        room_type: "computer_lab"
+        area_sqm: 100.0
+        height_m: 3.0
+        capacity: 45
+        target_temp_c: 23.0
+        min_temp_c: 22.0
+        max_temp_c: 25.0
+        is_critical: false
+        thermal_multiplier: 1.40
+        units:
+          - id: "ac-mgmt-102-1"
+            name: "Analytics Cassette 1"
+            rated_kw: 7.0
+            control_type: "inverter"
+          - id: "ac-mgmt-102-2"
+            name: "Analytics Cassette 2"
+            rated_kw: 10.5
+            control_type: "inverter"
+
+      - id: "mgmt-201"
+        name: "Case Study Seminar Hall"
+        room_type: "seminar"
+        area_sqm: 80.0
+        height_m: 3.0
+        capacity: 40
+        target_temp_c: 24.5
+        min_temp_c: 23.5
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.95
+        units:
+          - id: "ac-mgmt-201-1"
+            name: "Seminar Split 1"
+            rated_kw: 3.5
+            control_type: "inverter"
+          - id: "ac-mgmt-201-2"
+            name: "Seminar Split 2"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+      - id: "mgmt-202"
+        name: "Syndicate Seminar Room"
+        room_type: "seminar"
+        area_sqm: 75.0
+        height_m: 3.0
+        capacity: 35
+        target_temp_c: 24.5
+        min_temp_c: 23.5
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.95
+        units:
+          - id: "ac-mgmt-202-1"
+            name: "Seminar Split 1"
+            rated_kw: 3.5
+            control_type: "inverter"
+          - id: "ac-mgmt-202-2"
+            name: "Seminar Split 2"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+      - id: "mgmt-301"
+        name: "MBA Faculty Office 1"
+        room_type: "office"
+        area_sqm: 50.0
+        height_m: 2.8
+        capacity: 12
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.85
+        units:
+          - id: "ac-mgmt-301-1"
+            name: "Office Split 1"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+      - id: "mgmt-302"
+        name: "MBA Faculty Office 2"
+        room_type: "office"
+        area_sqm: 50.0
+        height_m: 2.8
+        capacity: 12
+        target_temp_c: 24.0
+        min_temp_c: 23.0
+        max_temp_c: 26.0
+        is_critical: false
+        thermal_multiplier: 0.85
+        units:
+          - id: "ac-mgmt-302-1"
+            name: "Office Split 2"
+            rated_kw: 5.25
+            control_type: "inverter"
+
+# Schedules, Exams, and Holidays
+schedules:
+  - room_id: "eng-101"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "09:00:00"
+    end_time: "12:00:00"
+    activity_name: "Engineering Mechanics & Thermofluids"
+    expected_headcount: 85
+  - room_id: "eng-101"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "14:00:00"
+    end_time: "17:00:00"
+    activity_name: "Signals & Systems Lecture"
+    expected_headcount: 75
+
+  - room_id: "eng-102"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "09:30:00"
+    end_time: "13:00:00"
+    activity_name: "Robotics Kinematics Practicum"
+    expected_headcount: 32
+  - room_id: "eng-102"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "14:00:00"
+    end_time: "17:30:00"
+    activity_name: "IoT Sensor Prototyping"
+    expected_headcount: 28
+
+  - room_id: "eng-103"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "09:00:00"
+    end_time: "13:00:00"
+    activity_name: "Machine Learning Workshop"
+    expected_headcount: 45
+  - room_id: "eng-103"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "14:00:00"
+    end_time: "18:00:00"
+    activity_name: "Computer Vision Studio"
+    expected_headcount: 42
+
+  - room_id: "sci-101"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "10:00:00"
+    end_time: "13:00:00"
+    activity_name: "University General Chemistry"
+    expected_headcount: 120
+  - room_id: "sci-101"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "14:00:00"
+    end_time: "17:00:00"
+    activity_name: "Quantum Physics Fundamentals"
+    expected_headcount: 95
+
+  - room_id: "sci-201"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "09:00:00"
+    end_time: "16:00:00"
+    activity_name: "Organic Synthesis Continuous Lab"
+    expected_headcount: 35
+
+  - room_id: "sci-202"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "10:00:00"
+    end_time: "14:00:00"
+    activity_name: "Genomic Sequencing Computational Lab"
+    expected_headcount: 38
+
+  - room_id: "sci-301"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "10:00:00"
+    end_time: "13:00:00"
+    activity_name: "Graduate Seminar: Molecular Modeling"
+    expected_headcount: 16
+
+  - room_id: "sci-303"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "10:30:00"
+    end_time: "13:30:00"
+    activity_name: "Dean Academic Review Sessions"
+    expected_headcount: 5
+
+  - room_id: "eng-201"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "14:00:00"
+    end_time: "17:00:00"
+    activity_name: "Advanced Applied Mathematics Colloquium"
+    expected_headcount: 28
+
+  - room_id: "mgmt-101"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "09:30:00"
+    end_time: "12:30:00"
+    activity_name: "Managerial Economics"
+    expected_headcount: 105
+  - room_id: "mgmt-101"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "14:00:00"
+    end_time: "17:00:00"
+    activity_name: "Operations & Supply Chain Strategy"
+    expected_headcount: 90
+
+  - room_id: "mgmt-102"
+    day_of_week: [0, 1, 2, 3, 4]
+    start_time: "09:00:00"
+    end_time: "13:00:00"
+    activity_name: "Financial Econometrics Lab"
+    expected_headcount: 40
+
+special_events:
+  - id: "exam-midterm-eng"
+    room_id: "eng-101"
+    date: "2026-06-15"
+    start_time: "09:00:00"
+    end_time: "13:00:00"
+    activity_name: "Mid-Term Examination: Thermodynamics"
+    expected_headcount: 95
+  - id: "exam-midterm-sci"
+    room_id: "sci-101"
+    date: "2026-06-16"
+    start_time: "09:00:00"
+    end_time: "13:00:00"
+    activity_name: "Mid-Term Examination: Organic Chemistry"
+    expected_headcount: 130
+  - id: "exam-midterm-mgmt"
+    room_id: "mgmt-101"
+    date: "2026-06-17"
+    start_time: "13:00:00"
+    end_time: "17:00:00"
+    activity_name: "Mid-Term Examination: Financial Accounting"
+    expected_headcount: 115
+
+holidays:
+  - "2026-06-19"
+  - "2026-07-04"

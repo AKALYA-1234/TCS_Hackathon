@@ -1,0 +1,13 @@
+{
+  "model_name": "anomaly_detector_m3",
+  "model_type": "Isolation Forest (Unsupervised Fallback)",
+  "contamination": 0.05,
+  "seed": 42,
+  "metrics": {
+    "detection_rate_on_waste_pct": 100.0,
+    "false_positive_rate_pct": 4.93,
+    "waste_intervals_in_test": 176,
+    "normal_intervals_in_test": 25744
+  },
+  "comparison_with_m2": "M2 (Supervised LightGBM) is the primary detector because it classifies the specific waste taxonomy and distinguishes legitimate authorized decoys from waste. M3 serves as an unsupervised fallback for unmodeled fault modes."
+}

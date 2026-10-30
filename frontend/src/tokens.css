@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   FROSTLINE DESIGN SYSTEM TOKENS
+   Single source of truth derived directly from reference spec:
+   reference/Tokens + components · Dark.png & Light.png
+   ========================================================================== */
+
+:root,
+.theme-light {
+  /* Surfaces & Backgrounds */
+  --bg-page: #F5F5F7;
+  --bg-sidebar: #FCFCFD;
+  --bg-card: #FFFFFF;
+  --bg-well: #ECECF0;
+  --bg-frost: rgba(255, 255, 255, 0.72);
+  --bg-frost-blur: blur(24px) saturate(180%);
+
+  /* Text Levels */
+  --text-primary: #1D1D1F;
+  --text-secondary: #55555C;
+  --text-tertiary: #6B6B75;
+  --text-muted: #8E8E93;
+
+  /* Accent */
+  --accent: #0062CC;
+  --accent-hover: #0051A8;
+  --accent-pressed: #004085;
+  --accent-subtle: #E2ECF8;
+
+  /* Status Colors */
+  --status-healthy: #1B7A3A;
+  --status-healthy-bg: #D8E3DC;
+  --status-review: #8A5300;
+  --status-review-bg: #F8ECD6;
+  --status-failed: #C4261D;
+  --status-failed-bg: rgba(196, 38, 29, 0.12);
+
+  /* Borders & Separators */
+  --border-subtle: #ECECF0;
+  --border-separator: #ECECF0;
+  --border-focus: #0062CC;
+
+  /* Waste Types (5 types) */
+  --waste-ah: #5865C2;
+  --waste-gc: #16A085;
+  --waste-oc: #C0397B;
+  --waste-es: #B8860B;
+  --waste-pl: #8142BD;
+
+  /* Corner Radii */
+  --radius-card: 5px;
+  --card-radius: 5px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-sheet: 0 12px 36px rgba(0, 0, 0, 0.12);
+}
+
+.theme-dark {
+  /* Surfaces & Backgrounds */
+  --bg-page: #0A0A0C;
+  --bg-sidebar: #1C1C1E;
+  --bg-card: #1C1C1E;
+  --bg-well: #141416;
+  --bg-frost: rgba(26, 26, 30, 0.72);
+  --bg-frost-blur: blur(24px) saturate(180%);
+
+  /* Text Levels */
+  --text-primary: #F5F5F7;
+  --text-secondary: #A8A8B2;
+  --text-tertiary: #8F8F9A;
+  --text-muted: #636366;
+
+  /* Accent */
+  --accent: #40A3FF;
+  --accent-hover: #54B0FF;
+  --accent-pressed: #2C8CEB;
+  --accent-subtle: rgba(64, 163, 255, 0.15);
+
+  /* Status Colors */
+  --status-healthy: #5BD67F;
+  --status-healthy-bg: rgba(91, 214, 127, 0.14);
+  --status-review: #FFB84D;
+  --status-review-bg: rgba(255, 184, 77, 0.14);
+  --status-failed: #FF7A70;
+  --status-failed-bg: rgba(255, 122, 112, 0.14);
+
+  /* Borders & Separators */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-separator: rgba(255, 255, 255, 0.11);
+  --border-focus: #40A3FF;
+
+  /* Waste Types (5 types) */
+  --waste-ah: #7E8CE0; /* After-hours */
+  --waste-gc: #30D1B2; /* Ghost cooling */
+  --waste-oc: #D95B96; /* Overcooling */
+  --waste-es: #D4A346; /* Early start */
+  --waste-pl: #9D65D4; /* Possible leakage */
+
+  /* Corner Radii */
+  --radius-card: 5px;
+  --card-radius: 5px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-sheet: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+@theme {
+  --radius-card: 5px;
+  --radius-2xl: 5px;
+}
+
+/* ==========================================================================
+   CARD DESIGN RULES
+   User requirement: "make the corner radus of cards to 5px"
+   ========================================================================== */
+
+.apple-card,
+.card,
+[class*="rounded-[20px]"],
+[class*="rounded-[18px]"],
+[class*="rounded-[16px]"],
+.rounded-2xl {
+  border-radius: 5px !important;
+}
+
+/* Ensure all card elements with --bg-card or --surface backgrounds have 5px radius */
+div[style*="var(--bg-card)"],
+div[style*="var(--surface)"],
+section[style*="var(--bg-card)"],
+article[style*="var(--bg-card)"] {
+  border-radius: 5px !important;
+}
+
+/* Preserve pills, badges and circles */
+.rounded-full,
+[class*="rounded-full"] {
+  border-radius: 9999px !important;
+}
+
+/* Global Typography & Resets */
+body {
+  font-family: SF Pro, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Accessible visible focus ring */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Frosted glass bar */
+.frosted-glass {
+  background: var(--bg-frost);
+  backdrop-filter: var(--bg-frost-blur);
+  -webkit-backdrop-filter: var(--bg-frost-blur);
+}
+
+/* Hide scrollbars for touch/pill bars while retaining scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Elegant sleek scrollbar for main window */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Shimmer animation for skeletons */
+@keyframes shimmer {
+  0% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0.45; }
+}
+
+.skeleton-pulse {
+  animation: shimmer 1.6s ease-in-out infinite;
+}

@@ -1,0 +1,36 @@
+{
+  "model_name": "ashrae_chilled_water_baseline",
+  "dataset_sha256": "4fade140f814e5266971a413f9a87ca535c2518f9e087a8ebdeaeb2f03d5bf7b",
+  "buildings_evaluated": [
+    "169",
+    "173",
+    "229",
+    "253"
+  ],
+  "metrics": {
+    "169": {
+      "cv_rmse_pct": 22.03,
+      "nmbe_pct": -8.17,
+      "guideline_14_verdict": "PASS"
+    },
+    "173": {
+      "cv_rmse_pct": 65.9,
+      "nmbe_pct": -60.53,
+      "guideline_14_verdict": "FAIL"
+    },
+    "229": {
+      "cv_rmse_pct": 41.13,
+      "nmbe_pct": -14.09,
+      "guideline_14_verdict": "FAIL"
+    },
+    "253": {
+      "cv_rmse_pct": 49.05,
+      "nmbe_pct": -43.54,
+      "guideline_14_verdict": "FAIL"
+    }
+  },
+  "diagnosis": {
+    "root_cause": "Distribution shift across time split (train Jan-Sep, test Nov-Dec)",
+    "details": "Chilled water load drops by 44-59% in winter test months as temperatures fall by 10.3\u00b0C. The month feature in tree models cannot extrapolate to unseen winter months."
+  }
+}

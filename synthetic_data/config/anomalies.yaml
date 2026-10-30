@@ -1,0 +1,64 @@
+# Anomaly and Decoy Injection Configurations
+# Enforces at least 25 events per anomaly type, strictly non-overlapping per AC unit.
+# Server room is treated as a critical control: MUST NOT BE FLAGGED as waste.
+
+injection_policy:
+  mode: "deterministic_budget"
+  target_events_per_type: 28    # Guarantees >= 25 per type
+  min_duration_minutes: 60      # 1 hour
+  max_duration_minutes: 240     # 4 hours
+  prevent_unit_overlaps: true
+  exclude_rooms:
+    - "eng-server"              # Server room control: strict 24/7 cooling, never flagged as waste
+
+anomaly_types:
+  after_hours:
+    description: "AC running during unoccupied late night (22:00-05:30) or weekends"
+    power_multiplier_of_rated: 0.65
+    target_occupancy: 0
+    is_decoy: false
+
+  ghost_cooling:
+    description: "AC cooling empty room during daytime/class hours with 0 occupancy"
+    power_multiplier_of_rated: 0.85
+    target_occupancy: 0
+    is_decoy: false
+
+  overcooling:
+    description: "Thermostat setpoint dialed to sub-comfort freezing levels (19.0°C-20.0°C)"
+    power_multiplier_of_rated: 0.95
+    temp_override_c: 19.5
+    is_decoy: false
+
+  early_start:
+    description: "AC pre-cooling turned on hours before necessary based on room RC time constant"
+    hours_before_schedule: 3.5
+    power_multiplier_of_rated: 0.75
+    is_decoy: false
+
+  possible_leakage:
+    description: "Compressor runs at continuous max power but indoor temp fails to drop (refrigerant leak/open envelope)"
+    power_multiplier_of_rated: 1.05
+    temp_failure_delta: 3.8
+    is_decoy: false
+
+# Decoy Events: Normal / Authorized operations that look like anomalies but are legitimate exceptions
+# Labelled with is_legitimate_decoy = true, at least 10 events per kind.
+decoy_types:
+  late_lab_exception:
+    description: "Approved late-night student research project with verified authorized exception"
+    expected_headcount: 5
+    is_decoy: true
+    target_count: 14
+
+  exam_overrun:
+    description: "Scheduled examination or viva session extending past regular timetable hours"
+    expected_headcount: 35
+    is_decoy: true
+    target_count: 12
+
+  ad_hoc_seminar:
+    description: "Short-notice visiting professor seminar or student symposium"
+    expected_headcount: 25
+    is_decoy: true
+    target_count: 12

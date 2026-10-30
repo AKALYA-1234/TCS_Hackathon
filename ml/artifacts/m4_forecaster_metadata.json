@@ -1,0 +1,114 @@
+{
+  "model_name": "load_forecaster_m4",
+  "model_type": "Direct Multi-Horizon LightGBM Regressors",
+  "seed": 42,
+  "horizons": [
+    "24h",
+    "7d",
+    "30d"
+  ],
+  "overall_verdict": "FAIL",
+  "horizon_metrics": {
+    "24h": {
+      "naive_baseline": {
+        "mape_pct": 15.77,
+        "wape_pct": 11.95,
+        "cv_rmse_pct": 19.27
+      },
+      "forecast_scenario": {
+        "mape_pct": 16.69,
+        "wape_pct": 17.57,
+        "cv_rmse_pct": 27.09
+      },
+      "oracle_weather_scenario": {
+        "mape_pct": 15.13,
+        "wape_pct": 12.69,
+        "cv_rmse_pct": 19.55
+      },
+      "beats_naive_baseline": false,
+      "verdict": "FAIL",
+      "residual_analysis": {
+        "naive_rmse": 4.871,
+        "naive_mean_bias": 0.975,
+        "naive_std": 4.772,
+        "forecast_rmse": 6.845,
+        "forecast_mean_bias": 3.395,
+        "forecast_std": 5.944,
+        "oracle_rmse": 4.94,
+        "oracle_mean_bias": 1.828,
+        "oracle_std": 4.589
+      }
+    },
+    "7d": {
+      "naive_baseline": {
+        "mape_pct": 15.77,
+        "wape_pct": 11.95,
+        "cv_rmse_pct": 19.27
+      },
+      "forecast_scenario": {
+        "mape_pct": 20.78,
+        "wape_pct": 22.44,
+        "cv_rmse_pct": 36.56
+      },
+      "oracle_weather_scenario": {
+        "mape_pct": 18.83,
+        "wape_pct": 15.88,
+        "cv_rmse_pct": 25.43
+      },
+      "beats_naive_baseline": false,
+      "verdict": "FAIL",
+      "residual_analysis": {
+        "naive_rmse": 4.871,
+        "naive_mean_bias": 0.975,
+        "naive_std": 4.772,
+        "forecast_rmse": 9.239,
+        "forecast_mean_bias": 4.039,
+        "forecast_std": 8.309,
+        "oracle_rmse": 6.426,
+        "oracle_mean_bias": 1.957,
+        "oracle_std": 6.121
+      }
+    },
+    "30d": {
+      "naive_baseline": {
+        "mape_pct": 22.4,
+        "wape_pct": 15.02,
+        "cv_rmse_pct": 21.72
+      },
+      "forecast_scenario": {
+        "mape_pct": 17.09,
+        "wape_pct": 12.65,
+        "cv_rmse_pct": 18.3
+      },
+      "oracle_weather_scenario": {
+        "mape_pct": 21.82,
+        "wape_pct": 12.8,
+        "cv_rmse_pct": 18.02
+      },
+      "beats_naive_baseline": true,
+      "verdict": "PASS",
+      "residual_analysis": {
+        "naive_rmse": 6.172,
+        "naive_mean_bias": 1.191,
+        "naive_std": 6.056,
+        "forecast_rmse": 5.199,
+        "forecast_mean_bias": 1.798,
+        "forecast_std": 4.879,
+        "oracle_rmse": 5.121,
+        "oracle_mean_bias": 0.673,
+        "oracle_std": 5.077
+      }
+    }
+  },
+  "monthly_projections": {
+    "projected_kwh": 2888.9,
+    "tariff_rate_inr_per_kwh": 9.2,
+    "projected_cost_inr": 26578.24
+  },
+  "failure_explanation": "For shorter horizons (24h, 7d), campus cooling exhibits highly regular weekly periodicity (exact timetable schedules and diurnal thermal cycling). The same-hour-last-week naive seasonal baseline achieves an exceptionally low CV(RMSE) of ~19.3% and low bias (+0.97 kW). Gradient boosted trees using climatological averages lack true real-time temperature innovations and slightly smooth out extreme compressor peaks, resulting in higher residual variance (Std 5.94-8.31 kW vs 4.77 kW). At the 30-day horizon, where distant weather shifts degrade the naive persistence assumption, the direct forecaster successfully outperforms the naive baseline (CV(RMSE) 18.30% vs 21.72%, PASS).",
+  "assumptions": [
+    "Target-time features include hour, weekday, is_weekend, holiday, expected_headcount, and climatology temperature",
+    "For horizon h, load lags are restricted to issue time (t - h) and older (t - h - 24, t - h - 168)",
+    "Standard commercial tariff \u20b99.20/kWh applied for cost projections"
+  ]
+}

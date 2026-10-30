@@ -1,0 +1,25 @@
+{
+  "model_name": "cv_headcount_detector_m5",
+  "model_architecture": "YOLOv8n-pose / MobileNet-SSD (Simulated Edge Camera Stream)",
+  "license": "AGPL-3.0 / MIT (Reference Edge Deployment)",
+  "status": "UNVERIFIED (No raw video frames or optical cameras present in repo)",
+  "smoothing_rule": "Exponential Moving Average (alpha=0.3, temporal persistence window=15s)",
+  "inference_benchmark_cpu": {
+    "ms_per_frame": 0.0015,
+    "equivalent_fps": 647858.0,
+    "evaluation_samples": 10000
+  },
+  "stream_telemetry_metrics": {
+    "mean_confidence": 0.933,
+    "confidence_range": [
+      0.88,
+      0.98
+    ],
+    "total_records_processed": 311040
+  },
+  "assumptions": [
+    "Raw video camera feeds are not recorded due to privacy and storage constraints",
+    "Bounding box noise simulated with Gaussian sigma=1.1 students",
+    "Headcount signal streamed via MQTT JSON payload as edge-processed count"
+  ]
+}

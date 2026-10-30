@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synthetic-data"
+version = "0.1.0"
+description = "Room-level synthetic AC telemetry generator anchored on ASHRAE GEPIII cooling profiles"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0.0",
+    "pyarrow>=14.0.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0.0",
+    "click>=8.1.0",
+    "tqdm>=4.66.0",
+    "matplotlib>=3.7.0",
+]
+
+[project.scripts]
+synthetic-data = "synthetic_data.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

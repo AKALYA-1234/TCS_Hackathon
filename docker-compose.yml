@@ -1,0 +1,185 @@
+services:
+  # -----------------------------------------------------------
+  # Message Broker: Eclipse Mosquitto (MQTT standard & WebSockets)
+  # -----------------------------------------------------------
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt_broker
+    ports:
+      - "1883:1883"  # MQTT default TCP
+      - "9001:9001"  # MQTT over WebSockets
+    volumes:
+      - ./backend/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Time-Series Database: TimescaleDB (PostgreSQL 16 Engine)
+  # -----------------------------------------------------------
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb_primary
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-app_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Microservice 1: User Service (Identity & Profile Domain)
+  # -----------------------------------------------------------
+  user_service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: user_microservice
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+    volumes:
+      - ./backend/services/user_service/app:/app/app
+      - ./backend/common:/app/common
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescaledb:5432/${POSTGRES_DB:-app_db}
+    ports:
+      - "8001:8001"
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Microservice 2: Product Service (Catalog & Inventory Domain)
+  # -----------------------------------------------------------
+  product_service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: product_microservice
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+    volumes:
+      - ./backend/services/product_service/app:/app/app
+      - ./backend/common:/app/common
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescaledb:5432/${POSTGRES_DB:-app_db}
+    ports:
+      - "8002:8002"
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Microservice 3: Sensor Telemetry Service (Layered Clean Architecture)
+  # Ingests time-series to TimescaleDB & Emits MQTT Events
+  # -----------------------------------------------------------
+  sensor_service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sensor_microservice
+    command: uvicorn services.sensor_service.main:app --host 0.0.0.0 --port 8003 --reload
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@timescaledb:5432/${POSTGRES_DB:-app_db}
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+    ports:
+      - "8003:8003"
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Microservice 4: Analytics & Event Consumer Worker
+  # Subscribes to MQTT topics (sensors/#, alerts/#)
+  # -----------------------------------------------------------
+  analytics_consumer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: analytics_consumer
+    command: uvicorn services.analytics_consumer.main:app --host 0.0.0.0 --port 8004 --reload
+    volumes:
+      - ./backend:/app
+    environment:
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+    ports:
+      - "8004:8004"
+    depends_on:
+      mosquitto:
+        condition: service_started
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Reverse Proxy & Gateway: API Gateway
+  # -----------------------------------------------------------
+  api_gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend/gateway/app:/app/app
+      - ./backend/common:/app/common
+    environment:
+      - USER_SERVICE_URL=http://user_service:8001
+      - PRODUCT_SERVICE_URL=http://product_service:8002
+      - SENSOR_SERVICE_URL=http://sensor_service:8003
+      - ANALYTICS_SERVICE_URL=http://analytics_consumer:8004
+    ports:
+      - "8000:8000"
+    depends_on:
+      - user_service
+      - product_service
+      - sensor_service
+      - analytics_consumer
+    networks:
+      - microservices_net
+
+  # -----------------------------------------------------------
+  # Frontend: React 19 + Tailwind CSS v4 Dashboard
+  # -----------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api_gateway
+    networks:
+      - microservices_net
+
+networks:
+  microservices_net:
+    driver: bridge
+
+volumes:
+  timescale_data:
+    driver: local
+  mosquitto_data:
+    driver: local
+  mosquitto_log:
+    driver: local

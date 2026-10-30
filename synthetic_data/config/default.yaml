@@ -1,0 +1,155 @@
+# Master Generator Configuration
+seed: 42
+
+# Time horizon configuration: 60 days
+time_horizon:
+  start_date: "2026-06-01 00:00:00"
+  end_date: "2026-07-30 23:55:00"
+  step_minutes: 5  # High-resolution 5-minute intervals (configurable 1 to 60)
+
+# ASHRAE anchoring
+ashrae:
+  parquet_path: "../dataset_processed/ashrae_chilled_selected.parquet"
+  fallback_if_missing: true
+  timezone_offset_hours: -8       # Sign convention: local = UTC + offset. UTC weather peak at 23:00 UTC + (-8h) = 15:00 local (ASSUMPTION: Site 2 UTC offset is -8h or -7h with thermal lag).
+  building_archetype_mapping:
+    "Engineering Hall": 173       # Academic & Lecture Hall (90.9k sqft)
+    "Science Complex": 253        # Laboratories & Classrooms (65.9k sqft)
+    "Management Block": 229       # Multi-story Academic Facility (140.1k sqft)
+
+# 2R2C Thermal & HVAC Physics assumptions
+physics:
+  # Design conditions for equipment sizing (ASSUMPTION)
+  design_conditions:
+    outdoor_design_temp_c: 38.5   # Extreme summer peak design outdoor temperature (ASSUMPTION)
+    person_diversity_factor: 0.85 # Coincident design headcount factor (ASSUMPTION)
+    lighting_diversity_factor: 0.85 # Coincident lighting operation factor (ASSUMPTION)
+    equipment_diversity_factor: 0.80 # Coincident plug loads factor (ASSUMPTION)
+    precool_target_min: 15.0      # Pre-cool target window minutes min (ASSUMPTION)
+    precool_target_max: 60.0      # Pre-cool target window minutes max (ASSUMPTION)
+    early_start_excess_min_min: 45.0 # Early start excess minutes minimum (ASSUMPTION)
+    early_start_excess_min_max: 120.0 # Early start excess minutes maximum (ASSUMPTION)
+
+  # Thermostat deadband hysteresis
+  hysteresis_half_band_c: 0.5     # [setpoint - 0.5, setpoint + 0.5] (ASSUMPTION)
+  
+  # Sensible Heat Ratio
+  shr_default: 0.75               # Ratio of sensible to total cooling capacity (ASSUMPTION)
+  
+  # Pre-cool time limit
+  max_precool_minutes: 180.0      # Maximum pre-cool duration cap (ASSUMPTION)
+  early_start_excess_minutes: 60.0 # Flag early_start if AC turned on > 60m before computed pulldown (ASSUMPTION)
+
+  # Air constants
+  rho_air: 1.18                   # kg/m3 (Standard air density at 25°C)
+  cp_air: 1006.0                  # J/(kg·K) (Specific heat capacity of dry air)
+
+  # AC Power & COP Dual-Model
+  fixed_speed:
+    cop_rated: 3.20               # EER 3.20 at 35°C rated point (ASSUMPTION)
+    startup_surge_multiplier: 1.35 # Inrush compressor surge factor (ASSUMPTION)
+    standby_power_kw: 0.03        # Electronics draw when OFF (30W, ASSUMPTION)
+    fan_power_kw: 0.06            # Indoor fan continuous power (60W, ASSUMPTION)
+
+  inverter:
+    # 1 TR 3-star AC datasheet calibration points:
+    # Point 1 (100% full load): 3550 W cooling @ 1110 W input (EER 3.20)
+    # Point 2 (50% part load):  1775 W cooling @ 430 W input  (EER 4.13)
+    p_cool_100_w: 3550.0
+    p_elec_100_w: 1110.0
+    p_cool_50_w: 1775.0
+    p_elec_50_w: 430.0
+    min_load_fraction: 0.25       # Minimum modulation floor (25% capacity) (ASSUMPTION)
+    min_floor_power_kw: 0.22      # Power draw at minimum speed floor (ASSUMPTION)
+    standby_power_kw: 0.03        # 30W standby (ASSUMPTION)
+    fan_power_kw: 0.05            # 50W fan (ASSUMPTION)
+
+  # Ambient Temperature Derate on COP (Modest physical derate, ASSUMPTION)
+  cop_temp_derate_per_deg: 0.015  # 1.5% COP degradation per °C ambient above 35°C (ASSUMPTION)
+  cop_min: 2.1
+  cop_max: 4.8
+
+  # Measurement noise
+  indoor_temp_noise_std: 0.12     # Sensor measurement noise (°C) (ASSUMPTION)
+  power_noise_std: 0.015          # Power transducer measurement noise (kW) (ASSUMPTION)
+
+  # Setpoint Energy Elasticity
+  default_optimizer_elasticity_pct: 4.0 # Baseline rule-of-thumb: 4% savings per +1°C (ASSUMPTION)
+
+  # Optional Ventilation
+  enable_ventilation: false       # Ventilation sensible heat gain term (ASSUMPTION)
+  ventilation_flow_per_person_m3s: 0.005 # 5 L/s per person ASHRAE 62.1 (ASSUMPTION)
+
+# Internal Heat Gains by Activity (ASHRAE Fundamentals 2021, Table 1, at 24°C)
+internal_gains:
+  # Seated at rest / lecture: 67W sensible, 33W latent (100W total)
+  lecture_hall:
+    person_sensible_w: 67.0
+    person_latent_w: 33.0
+    lighting_w_per_sqm: 10.5      # Efficient LED/commercial (ASSUMPTION)
+    equipment_w: 500.0            # Projector, podium AV (ASSUMPTION)
+    ua_per_sqm: 2.2               # Envelope UA factor W/(m2·K) (ASSUMPTION)
+    cm_per_sqm: 75000.0           # Effective mass capacity J/(m2·K) (ASSUMPTION)
+    ram_coupling_w_per_sqm: 3.5   # Air-to-mass coupling W/(m2·K) (ASSUMPTION: lump convective film)
+
+  # Seated light work / computer lab: 70W sensible, 50W latent (120W total)
+  computer_lab:
+    person_sensible_w: 70.0
+    person_latent_w: 50.0
+    lighting_w_per_sqm: 11.0
+    equipment_w: 3800.0           # 35-45 PCs @ 85W avg each (ASSUMPTION)
+    ua_per_sqm: 2.5
+    cm_per_sqm: 80000.0
+    ram_coupling_w_per_sqm: 3.5   # Air-to-mass coupling W/(m2·K) (ASSUMPTION: lump convective film)
+
+  lab:
+    person_sensible_w: 75.0
+    person_latent_w: 55.0
+    lighting_w_per_sqm: 12.0
+    equipment_w: 2500.0           # Precision instruments, robotics, power supplies (ASSUMPTION)
+    ua_per_sqm: 2.4
+    cm_per_sqm: 85000.0
+    ram_coupling_w_per_sqm: 3.5   # Air-to-mass coupling W/(m2·K) (ASSUMPTION: lump convective film)
+
+  seminar:
+    person_sensible_w: 68.0
+    person_latent_w: 35.0
+    lighting_w_per_sqm: 9.5
+    equipment_w: 400.0
+    ua_per_sqm: 2.1
+    cm_per_sqm: 70000.0
+    ram_coupling_w_per_sqm: 3.5   # Air-to-mass coupling W/(m2·K) (ASSUMPTION: lump convective film)
+
+  office:
+    person_sensible_w: 70.0
+    person_latent_w: 45.0
+    lighting_w_per_sqm: 10.6      # ASHRAE standard office lighting (ASSUMPTION)
+    equipment_w: 600.0            # Laptops, monitors, printer (ASSUMPTION)
+    ua_per_sqm: 2.0
+    cm_per_sqm: 65000.0
+    ram_coupling_w_per_sqm: 3.5   # Air-to-mass coupling W/(m2·K) (ASSUMPTION: lump convective film)
+
+  server_room:
+    person_sensible_w: 75.0
+    person_latent_w: 45.0
+    lighting_w_per_sqm: 6.0
+    equipment_w: 7200.0           # Constant server IT server racks (7.2 kW continuous) (ASSUMPTION)
+    ua_per_sqm: 1.8
+    cm_per_sqm: 60000.0
+    ram_coupling_w_per_sqm: 3.5   # Air-to-mass coupling W/(m2·K) (ASSUMPTION: lump convective film)
+
+# CV Headcount Camera assumptions
+cv_occupancy:
+  attendance_ratio_min: 0.72
+  attendance_ratio_max: 0.94
+  headcount_noise_std: 1.1        # CV bounding-box detector noise (ASSUMPTION)
+  confidence_min: 0.88
+  confidence_max: 0.98
+
+# Economic Tariff Assumptions (matches backend TariffModel, labelled ASSUMPTION)
+tariff:
+  currency: "INR"
+  base_rate_per_kwh: 8.50         # Regular off-peak rate INR/kWh (ASSUMPTION)
+  peak_rate_per_kwh: 12.50        # Time-of-Use Peak rate INR/kWh (ASSUMPTION)
+  peak_start_hour: 14             # Peak window: 14:00 - 18:00 (ASSUMPTION)
+  peak_end_hour: 18

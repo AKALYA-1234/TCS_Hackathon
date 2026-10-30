@@ -1,0 +1,131 @@
+{
+  "model_name": "waste_classifier_m2",
+  "model_type": "LightGBM Multiclass Classifier (Balanced Weights)",
+  "created_utc": "2026-10-29 23:47:10Z",
+  "seed": 42,
+  "classes": [
+    "normal",
+    "after_hours",
+    "ghost_cooling",
+    "overcooling",
+    "early_start",
+    "possible_leakage"
+  ],
+  "features": [
+    "baseline_residual_kw",
+    "residual_z_score",
+    "occupancy_vs_timetable",
+    "occupancy",
+    "expected_headcount",
+    "scheduled_hours",
+    "setpoint_minus_room_temp",
+    "runtime_fraction",
+    "outdoor_temp_c",
+    "hour",
+    "weekday",
+    "is_weekend"
+  ],
+  "decision_threshold": 0.5,
+  "metrics": {
+    "macro_f1": 0.9,
+    "brier_score": 0.0024,
+    "decoy_false_positive_rate": 0.0,
+    "decoy_total_intervals": 43,
+    "server_room_fp_rate": 0.0,
+    "server_room_total_intervals": 1728,
+    "per_class_metrics": {
+      "normal": {
+        "precision": 0.999,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 25744
+      },
+      "after_hours": {
+        "precision": 0.636,
+        "recall": 1.0,
+        "f1": 0.778,
+        "support": 14
+      },
+      "ghost_cooling": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.889,
+        "support": 8
+      },
+      "overcooling": {
+        "precision": 1.0,
+        "recall": 0.938,
+        "f1": 0.968,
+        "support": 48
+      },
+      "early_start": {
+        "precision": 0.974,
+        "recall": 0.86,
+        "f1": 0.914,
+        "support": 43
+      },
+      "possible_leakage": {
+        "precision": 0.96,
+        "recall": 0.762,
+        "f1": 0.85,
+        "support": 63
+      }
+    },
+    "confusion_matrix": [
+      [
+        25740,
+        1,
+        0,
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        14,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        45,
+        0,
+        0
+      ],
+      [
+        3,
+        1,
+        2,
+        0,
+        37,
+        0
+      ],
+      [
+        10,
+        5,
+        0,
+        0,
+        0,
+        48
+      ]
+    ]
+  },
+  "assumptions": [
+    "Decoys are treated as ground-truth normal/non-waste",
+    "Target threshold of 0.50 used for multiclass decision argmax",
+    "Server room control baseline contains zero legitimate anomalies",
+    "Trained on synthetic data; validates pattern-recognition taxonomy"
+  ]
+}
